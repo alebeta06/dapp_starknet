@@ -1,6 +1,8 @@
 #[starknet::interface]
 trait ICounter<T> {
     fn get_counter(self: @T) -> u32;
+    fn increase_counter(ref self: T);
+    fn decrease_counter(ref self: T);
 }
 #[starknet::contract] 
 mod CounterContract {
@@ -22,6 +24,17 @@ mod CounterContract {
     impl CounterImpl of ICounter<ContractState> {
         fn get_counter(self: @ContractState) -> u32 {
             self.counter.read()
+        }
+        fn increase_counter(ref self: ContractState) {
+            let current_counter = self.counter.read();
+            let new_counter = current_counter + 1;
+            self.counter.write(new_counter);
+        }
+        fn decrease_counter(ref self: ContractState) {
+            let current_counter = self.counter.read();
+            assert!(current_counter > 0, "the counter can`t be negative");
+            let new_counter = current_counter - 1;
+            self.counter.write(new_counter);
         }
     }
 }
