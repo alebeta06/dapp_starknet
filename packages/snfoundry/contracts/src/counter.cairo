@@ -3,17 +3,28 @@ trait ICounter<T> {
     fn get_counter(self: @T) -> u32;
     fn increase_counter(ref self: T);
     fn decrease_counter(ref self: T);
+    fn set_counter(ref self: T, new_value: u32);
 }
 #[starknet::contract] 
 mod CounterContract {
     use super::ICounter;
     use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
     use starknet::{ContractAddress, get_caller_address};
+    use openzeppelin_access::ownable::OwnableComponent;
     
+
+    component!(path: OwnableComponent, storage: ownable, event: OwnableEvents);
+    
+    #[abi(embed_v0)]
+    impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
+    impl InternalImpl = OwnableComponent::InternalImpl<ContractState>;
+
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
         CounterChanged: CounterChanged,
+        #[flat]
+        OwnableEvents: OwnableComponent::Event,
     }
     
     #[derive(Drop, starknet::Event)]
@@ -36,11 +47,14 @@ mod CounterContract {
     #[storage]
     struct Storage {
         counter: u32,
+        #[substorage(v0)]
+        ownable: OwnableComponent::Storage,
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, init_value: u32) {
+    fn constructor(ref self: ContractState, init_value: u32, owner: ContractAddress) {
         self.counter.write(init_value);
+        InternalImpl::initializer(ref self.ownable, owner);
     }
 
     #[abi(embed_v0)]
@@ -73,5 +87,18 @@ mod CounterContract {
             };
             self.emit(event);
         }
+
+        fn set_counter(ref self: ContractState, new_value: u32) {
+            self.ownable.assert_only_owner();
+            let current_counter = self.counter.read();
+            self.counter.write(new_value);
+            let event: CounterChanged = CounterChanged {
+                caller: get_caller_address(),
+                old_value: current_counter,
+                new_value: new_value,
+                reason: ChangeReason::Set,
+            };
+            self.emit(event);
+        }    
     }
 }
