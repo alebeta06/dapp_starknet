@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     CounterContract: {
       address:
-        "0x6b1520b8b4916227beb10a102df164700af934cb0d4cb79b0fe3857e5591eb6",
+        "0x1110d2a89e900799c6efcb73e0ddf8bd0847b31680fa6fa9938087ca0951388",
       abi: [
         {
           type: "impl",
@@ -43,6 +43,59 @@ const deployedContracts = {
               outputs: [],
               state_mutability: "external",
             },
+            {
+              type: "function",
+              name: "set_counter",
+              inputs: [
+                {
+                  name: "new_value",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
+        {
+          type: "impl",
+          name: "OwnableImpl",
+          interface_name: "openzeppelin_access::ownable::interface::IOwnable",
+        },
+        {
+          type: "interface",
+          name: "openzeppelin_access::ownable::interface::IOwnable",
+          items: [
+            {
+              type: "function",
+              name: "owner",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "transfer_ownership",
+              inputs: [
+                {
+                  name: "new_owner",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "renounce_ownership",
+              inputs: [],
+              outputs: [],
+              state_mutability: "external",
+            },
           ],
         },
         {
@@ -53,17 +106,132 @@ const deployedContracts = {
               name: "init_value",
               type: "core::integer::u32",
             },
+            {
+              name: "owner",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "contracts::counter::CounterContract::ChangeReason",
+          variants: [
+            {
+              name: "Increase",
+              type: "()",
+            },
+            {
+              name: "Decrease",
+              type: "()",
+            },
+            {
+              name: "Reset",
+              type: "()",
+            },
+            {
+              name: "Set",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::counter::CounterContract::CounterChanged",
+          kind: "struct",
+          members: [
+            {
+              name: "caller",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+            {
+              name: "old_value",
+              type: "core::integer::u32",
+              kind: "data",
+            },
+            {
+              name: "new_value",
+              type: "core::integer::u32",
+              kind: "data",
+            },
+            {
+              name: "reason",
+              type: "contracts::counter::CounterContract::ChangeReason",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferred",
+          kind: "struct",
+          members: [
+            {
+              name: "previous_owner",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+            {
+              name: "new_owner",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
+          kind: "struct",
+          members: [
+            {
+              name: "previous_owner",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+            {
+              name: "new_owner",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "openzeppelin_access::ownable::ownable::OwnableComponent::Event",
+          kind: "enum",
+          variants: [
+            {
+              name: "OwnershipTransferred",
+              type: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferred",
+              kind: "nested",
+            },
+            {
+              name: "OwnershipTransferStarted",
+              type: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
+              kind: "nested",
+            },
           ],
         },
         {
           type: "event",
           name: "contracts::counter::CounterContract::Event",
           kind: "enum",
-          variants: [],
+          variants: [
+            {
+              name: "CounterChanged",
+              type: "contracts::counter::CounterContract::CounterChanged",
+              kind: "nested",
+            },
+            {
+              name: "OwnableEvents",
+              type: "openzeppelin_access::ownable::ownable::OwnableComponent::Event",
+              kind: "flat",
+            },
+          ],
         },
       ],
       classHash:
-        "0x68af8c0cb4d2618fb399fb3dec28131eff1ea7214385774eda01c7fdfb2ec95",
+        "0x5ce70e32e7e484f5f38aac00236aeec00b8da4f53e8c7d3e1cdfed1d4af94de",
     },
   },
 } as const;
