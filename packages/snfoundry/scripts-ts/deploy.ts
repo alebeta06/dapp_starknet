@@ -49,6 +49,7 @@ const deployScript = async (): Promise<void> => {
     contract: "CounterContract",
     constructorArgs: {
       init_value: 0,
+      owner: deployer.address,
     },
   });
 };
