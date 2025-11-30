@@ -126,9 +126,9 @@ mod CounterContract {
             self.counter.write(0);
 
             let event: CounterChanged = CounterChanged {
-                caller: caller,
                 old_value: current_counter,
                 new_value: 0,
+                caller: caller,
                 reason: ChangeReason::Reset,
             };
             self.emit(event);
