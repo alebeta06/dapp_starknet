@@ -4,13 +4,16 @@ trait ICounter<T> {
     fn increase_counter(ref self: T);
     fn decrease_counter(ref self: T);
     fn set_counter(ref self: T, new_value: u32);
+    fn reset_counter(ref self: T);
 }
+
 #[starknet::contract] 
 mod CounterContract {
     use super::ICounter;
     use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
-    use starknet::{ContractAddress, get_caller_address};
+    use starknet::{ContractAddress, get_caller_address, get_contract_address};
     use openzeppelin_access::ownable::OwnableComponent;
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvents);
@@ -97,6 +100,36 @@ mod CounterContract {
                 old_value: current_counter,
                 new_value: new_value,
                 reason: ChangeReason::Set,
+            };
+            self.emit(event);
+        }
+
+        fn reset_counter(ref self: ContractState) {
+            let payment_amount: u256 = 1000000000000000000;
+            let strk_token: ContractAddress = 0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d.try_into().unwrap();
+            let caller = get_caller_address();
+            let contract= get_contract_address();
+            
+            let dispatcher = IERC20Dispatcher { contract_address: strk_token };
+            
+            let balance = dispatcher.balance_of(caller);
+            assert!(balance >= payment_amount, "User doesn`t have enough balance");
+
+            let allowance = dispatcher.allowance(caller, contract);
+            assert!(allowance >= payment_amount, "Contract is not allowed to spend the user stark tokens");
+
+            let owner = self.ownable.owner();
+            let success =dispatcher.transfer_from(caller, owner, payment_amount);
+            assert!(success, "transfering stark failed");
+
+            let current_counter = self.counter.read();
+            self.counter.write(0);
+
+            let event: CounterChanged = CounterChanged {
+                caller: caller,
+                old_value: current_counter,
+                new_value: 0,
+                reason: ChangeReason::Reset,
             };
             self.emit(event);
         }    
