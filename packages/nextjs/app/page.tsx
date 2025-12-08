@@ -8,6 +8,9 @@ import { ResetCounter } from "~~/components/ResetCounter";
 import { SetCounter } from "~~/components/SetCounter";
 import { CounterEvents } from "~~/components/CounterEvents";
 import { CounterStats } from "~~/components/CounterStats";
+import { CounterLeaderboard } from "~~/components/CounterLeaderboard";
+import { CounterAnalytics } from "~~/components/CounterAnalytics";
+import { CounterNotifications } from "~~/components/CounterNotifications";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark";
 import { useAccount } from "~~/hooks/useAccount";
 
@@ -30,10 +33,25 @@ const Home = () => {
 
   const counter = counterData ? Number(counterData) : 0;
   const connectedAddressStr = connectedAddress ?? "";
-  const ownerAddressStr = ownerData ? ownerData.toString() : "";
+  // Convert ownerData to string, handling both bigint and string formats
+  // Pad to 64 hex characters for consistent formatting
+  const ownerAddressStr = ownerData 
+    ? (typeof ownerData === "bigint" 
+        ? `0x${ownerData.toString(16).padStart(64, "0")}` 
+        : (() => {
+            const str = String(ownerData);
+            if (str.startsWith("0x")) {
+              return `0x${str.replace(/^0x/, "").padStart(64, "0")}`;
+            }
+            return `0x${str.padStart(64, "0")}`;
+          })())
+    : "";
 
   return (
     <div className="flex items-center flex-col grow pt-10">
+      {/* Notifications component (doesn't render, just handles toasts) */}
+      <CounterNotifications />
+      
       <div className="px-5 w-full max-w-4xl">
         <h1 className="text-center mb-8">
           <span className="block text-2xl mb-2">Welcome to</span>
@@ -58,18 +76,26 @@ const Home = () => {
         </div>
 
         {/* Set Counter (Owner Only) */}
-        {connectedAddressStr && ownerAddressStr && (
-          <div className="mb-8">
-            <SetCounter
-              connectedAddress={connectedAddressStr}
-              ownerAddress={ownerAddressStr}
-            />
-          </div>
-        )}
+        <div className="mb-8">
+          <SetCounter
+            connectedAddress={connectedAddressStr}
+            ownerAddress={ownerAddressStr}
+          />
+        </div>
 
         {/* Statistics */}
         <div className="mb-8">
           <CounterStats />
+        </div>
+
+        {/* Analytics */}
+        <div className="mb-8">
+          <CounterAnalytics />
+        </div>
+
+        {/* Leaderboard */}
+        <div className="mb-8">
+          <CounterLeaderboard />
         </div>
 
         {/* Events Section */}
