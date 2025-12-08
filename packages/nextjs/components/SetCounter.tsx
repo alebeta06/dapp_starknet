@@ -23,8 +23,31 @@ export const SetCounter = ({ connectedAddress, ownerAddress }: SetCounterProps) 
   });
 
   // Check if connected address is the owner
+  // Normalize addresses for comparison (handle both string and bigint formats)
+  // Starknet addresses are 251 bits, so we need to pad to 64 hex characters (without 0x)
+  const normalizeAddress = (addr: string | bigint | undefined | null): string => {
+    if (!addr) return "";
+    // Convert bigint to hex string if needed
+    let addrStr: string;
+    if (typeof addr === "bigint") {
+      // Convert to hex and pad to 64 characters (Starknet address length)
+      const hexStr = addr.toString(16);
+      addrStr = `0x${hexStr.padStart(64, "0")}`;
+    } else {
+      addrStr = String(addr);
+    }
+    // Normalize: ensure 0x prefix, convert to lowercase, remove leading zeros after 0x
+    if (!addrStr.startsWith("0x")) {
+      addrStr = `0x${addrStr}`;
+    }
+    addrStr = addrStr.toLowerCase();
+    // Remove 0x, pad to 64 chars, then add 0x back
+    const hexPart = addrStr.replace(/^0x/, "").padStart(64, "0");
+    return `0x${hexPart}`;
+  };
+
   const isOwner = connectedAddress && ownerAddress && 
-    connectedAddress.toLowerCase() === ownerAddress.toLowerCase();
+    normalizeAddress(connectedAddress) === normalizeAddress(ownerAddress);
 
   const handleSetCounter = async () => {
     if (!address || !isOwner) {
@@ -48,9 +71,25 @@ export const SetCounter = ({ connectedAddress, ownerAddress }: SetCounterProps) 
     }
   };
 
-  // Don't show if user is not the owner
-  if (!isOwner || !address) {
-    return null;
+  // Show component but disable if not owner
+  if (!address) {
+    return (
+      <div className="card bg-base-200 shadow-lg border border-base-300 p-6">
+        <div className="alert alert-warning">
+          <span>Please connect your wallet to use this feature</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!ownerAddress) {
+    return (
+      <div className="card bg-base-200 shadow-lg border border-base-300 p-6">
+        <div className="alert alert-warning">
+          <span>Loading owner information...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -59,6 +98,20 @@ export const SetCounter = ({ connectedAddress, ownerAddress }: SetCounterProps) 
         <span className="badge badge-info">Owner Only</span>
         Set Counter Value
       </h3>
+      
+      {!isOwner && (
+        <div className="alert alert-error mb-4">
+          <span>
+            Only the contract owner can set the counter value.
+            <br />
+            <span className="text-xs mt-1 block">
+              Connected: {connectedAddress ? normalizeAddress(connectedAddress) : "N/A"}
+              <br />
+              Owner: {normalizeAddress(ownerAddress)}
+            </span>
+          </span>
+        </div>
+      )}
       
       <div className="flex flex-col gap-3">
         <div className="form-control">
@@ -87,7 +140,7 @@ export const SetCounter = ({ connectedAddress, ownerAddress }: SetCounterProps) 
         <button
           className="btn btn-info btn-lg"
           onClick={handleSetCounter}
-          disabled={isPending || !newValue || isNaN(parseInt(newValue))}
+          disabled={isPending || !newValue || isNaN(parseInt(newValue)) || !isOwner}
         >
           {isPending ? (
             <>
@@ -114,7 +167,7 @@ export const SetCounter = ({ connectedAddress, ownerAddress }: SetCounterProps) 
         </button>
 
         <div className="text-xs text-base-content/60 mt-2">
-          <p>Owner: <Address address={ownerAddress} format="short" /></p>
+          <div>Owner: <Address address={ownerAddress} format="short" /></div>
         </div>
       </div>
     </div>
