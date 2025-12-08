@@ -1,14 +1,34 @@
-# 🏗 Scaffold-Stark
+# 🔢 Counter DApp - Starknet
 
 <h4 align="center">
-  <a href="https://docs.scaffoldstark.com/">Documentation</a> |
-  <a href="https://scaffoldstark.com/">Website</a> |
-  <a href="https://scaffold-stark-demo.vercel.app/debug">Demo</a>
+  <a href="https://docs.scaffoldstark.com/">Scaffold-Stark Documentation</a> |
+  <a href="https://scaffoldstark.com/">Scaffold-Stark Website</a> |
+  <a href="https://www.youtube.com/playlist?list=PLMXIoXErTTYV-Pd6tXu0TzsQ2EYQ5bBEh">Developer Basecamp 13 Tutorial</a>
 </h4>
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+## 📖 About Counter DApp
 
-⚙️ Built using NextJS, Starknet.js, Scarb, Starknet-React, Starknet Foundry.
+**Counter DApp** is a decentralized application built on Starknet that demonstrates smart contract interactions through a simple counter mechanism. This project serves as a practical example of building full-stack dApps using **Scaffold-Stark 2**, following the [Developer Basecamp 13 tutorial series](https://www.youtube.com/playlist?list=PLMXIoXErTTYV-Pd6tXu0TzsQ2EYQ5bBEh).
+
+### 🎯 Features
+
+- **Increase/Decrease Counter**: Users can increment or decrement a counter value stored on-chain
+- **Reset Counter**: Reset the counter to zero (requires 1 STRK payment)
+- **Set Counter (Owner Only)**: Contract owner can set the counter to any arbitrary value
+- **Real-time Event Monitoring**: View counter changes in real-time with event notifications
+- **Analytics Dashboard**: Track counter statistics, user leaderboard, and action distribution
+- **Wallet Integration**: Connect with multiple Starknet wallet providers or use the built-in burner wallet
+
+### 🏗️ Built With
+
+This project is built using **Scaffold-Stark 2**, an open-source toolkit for building dApps on Starknet:
+
+- ⚙️ **Next.js 14** - React framework with App Router
+- 🔷 **Starknet.js** - JavaScript library for Starknet
+- 📦 **Scarb** - Cairo package manager
+- ⚛️ **Starknet-React** - React hooks for Starknet
+- 🧪 **Starknet Foundry** - Testing and deployment toolchain
+- 🎨 **Tailwind CSS + daisyUI** - Styling framework
 
 - ✅ **Contract Fast Reload**: Your frontend auto-adapts to your smart contracts as you deploy them.
 - 🪝 [**Custom hooks**](https://docs.scaffoldstark.com/hooks/): Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
@@ -161,49 +181,198 @@ Now you are ready!!!
 - Cairo - v2.12.2
 - Rpc - v0.9.x
 
-## Quickstart 1: Deploying a Smart Contract to Starknet-Devnet
+## 🚀 Quickstart: Running Counter DApp Locally
 
-To get started with Scaffold-Stark, follow the steps below:
+This guide will walk you through setting up and running the Counter DApp on your local machine using Starknet Devnet.
 
-1. Install the latest version of Scaffold-Stark
+### Prerequisites
+
+Make sure you have completed the [installation steps](#1-install-developer-tools) above before proceeding.
+
+### Step 1: Clone the Repository
 
 ```bash
-npx create-stark@latest
-cd my-dapp-example
+git clone <repository-url>
+cd dapp_starknet
 yarn install
 ```
 
-2. Run a local network in the first terminal.
+### Step 2: Start the Local Starknet Network (Terminal 1)
+
+Open your first terminal and run:
 
 ```bash
 yarn chain
 ```
 
-> To run a fork : `yarn chain --fork-network <URL> [--fork-block <BLOCK_NUMBER>]`
+**What you'll see:**
+- The command starts Starknet Devnet on `http://127.0.0.1:5050`
+- You'll see output indicating the network is running
+- Devnet provides prefunded accounts that you can use for testing
+- The network will keep running until you stop it (Ctrl+C)
 
-This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts` for your nextjs app.
+**Example output:**
+```
+Starting Starknet Devnet...
+Listening on http://127.0.0.1:5050
+Pre-funded accounts available
+```
 
-3. On a second terminal, deploy the sample contract:
+> 💡 **Tip**: To run a fork of a specific network, use: `yarn chain --fork-network <URL> [--fork-block <BLOCK_NUMBER>]`
+
+### Step 3: Deploy the Counter Contract (Terminal 2)
+
+Open a second terminal (keep Terminal 1 running) and deploy the contract:
 
 ```bash
 yarn deploy
 ```
 
-This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts-ts/deploy.ts` to deploy the contract to the network. You can also customize the deploy script.
+**What you'll see:**
+- The contract compiles using Scarb
+- Deployment transaction is sent to Devnet
+- Contract address is displayed
+- The contract ABI and address are automatically saved to `packages/nextjs/contracts/deployedContracts.ts`
 
-By default `Scaffold-Stark` takes the first prefunded account from `starknet-devnet` as a deployer address,
+**Example output:**
+```
+Compiling contracts...
+Deploying CounterContract...
+Contract deployed at: 0x...
+✅ Deployment successful!
+```
 
-4. On a third terminal, start your NextJS app:
+By default, Scaffold-Stark uses the first prefunded account from `starknet-devnet` as the deployer address. This account becomes the contract owner.
+
+### Step 4: Start the Frontend (Terminal 3)
+
+Open a third terminal (keep Terminals 1 and 2 running) and start the Next.js application:
 
 ```bash
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page.
+**What you'll see:**
+- Next.js development server starts
+- The app compiles and builds
+- Server runs on `http://localhost:3000`
+- Hot reload is enabled for development
 
-5. Check your environment variables. We have a `yarn postinstall` script that will create `.env` files based on the `.env.example` files provided. If the environment variables don't exist, you can manually create a `.env` file from the `.env.example` to get the app running!
+**Example output:**
+```
+▲ Next.js 14.x.x
+- Local:        http://localhost:3000
+- Ready in X seconds
+```
+
+### Step 5: Access the Application
+
+1. Open your browser and navigate to: **http://localhost:3000**
+
+2. **Connect a Wallet:**
+   - Click the "Connect Wallet" button in the top right
+   - You can use:
+     - **Burner Wallet** (built-in, no setup required) - Recommended for quick testing
+     - **Argent X** browser extension
+     - **Braavos** browser extension
+     - Other Starknet-compatible wallets
+
+3. **Using the Burner Wallet:**
+   - The burner wallet is automatically created when you select it
+   - It comes prefunded with test tokens from Devnet
+   - No need to import or configure anything
+   - Perfect for local development and testing
+
+4. **Interact with the Counter:**
+   - **Increase**: Click the "Increase" button to increment the counter
+   - **Decrease**: Click the "Decrease" button to decrement (disabled when counter is 0)
+   - **Reset**: Click "Reset" to set counter to 0 (requires 1 STRK approval and payment)
+   - **Set Counter**: If you're the contract owner, you can set any value directly
+
+5. **Explore Features:**
+   - View real-time counter changes in the events section
+   - Check statistics and analytics
+   - See the leaderboard of top contributors
+   - Monitor counter evolution over time
+
+### Environment Variables
+
+The `yarn postinstall` script automatically creates `.env` files from `.env.example` templates. If needed, you can manually create them:
+
+- `packages/nextjs/.env` - Frontend environment variables
+- `packages/snfoundry/.env` - Smart contract deployment variables
 
 > ⚠️ **IMPORTANT**: Never commit your private keys or sensitive environment variables to version control. The `.env` files are included in `.gitignore` by default, but always double-check before pushing your changes.
+
+### Project Structure
+
+This project follows the Scaffold-Stark 2 monorepo structure:
+
+```
+dapp_starknet/
+├── packages/
+│   ├── nextjs/                    # Frontend application
+│   │   ├── app/                   # Next.js 14 App Router
+│   │   │   └── page.tsx          # Main Counter DApp page
+│   │   ├── components/            # React components
+│   │   │   ├── CounterDisplay.tsx
+│   │   │   ├── IncreaseCounter.tsx
+│   │   │   ├── DecreaseCounter.tsx
+│   │   │   ├── ResetCounter.tsx
+│   │   │   ├── SetCounter.tsx
+│   │   │   ├── CounterEvents.tsx
+│   │   │   ├── CounterStats.tsx
+│   │   │   ├── CounterAnalytics.tsx
+│   │   │   ├── CounterLeaderboard.tsx
+│   │   │   └── CounterNotifications.tsx
+│   │   ├── hooks/                 # Custom React hooks
+│   │   │   └── scaffold-stark/   # Scaffold-Stark hooks
+│   │   ├── contracts/             # Auto-generated contract data
+│   │   │   └── deployedContracts.ts
+│   │   └── scaffold.config.ts     # Scaffold configuration
+│   │
+│   └── snfoundry/                 # Smart contracts
+│       ├── contracts/
+│       │   └── src/
+│       │       └── counter.cairo  # Counter smart contract
+│       ├── scripts-ts/
+│       │   └── deploy.ts          # Deployment script
+│       └── tests/                 # Contract tests
+│
+└── README.md
+```
+
+### How It Works
+
+1. **Smart Contract** (`counter.cairo`):
+   - Stores a counter value on-chain
+   - Implements `Ownable` pattern for access control
+   - Emits `CounterChanged` events for all state changes
+   - Requires STRK payment for reset functionality
+
+2. **Frontend Components**:
+   - Use Scaffold-Stark hooks (`useScaffoldReadContract`, `useScaffoldWriteContract`) to interact with the contract
+   - Real-time updates via event watching
+   - Responsive UI built with Tailwind CSS and daisyUI
+
+3. **Event System**:
+   - All counter changes emit events with reason (Increase/Decrease/Reset/Set)
+   - Frontend subscribes to events for real-time updates
+   - Historical event data powers analytics and leaderboard
+
+### Learning Resources
+
+This project is based on the **Developer Basecamp 13** tutorial series:
+
+📺 **[Watch the Tutorial Series](https://www.youtube.com/playlist?list=PLMXIoXErTTYV-Pd6tXu0TzsQ2EYQ5bBEh)**
+
+The series consists of 6 videos covering:
+- Setting up Scaffold-Stark 2
+- Writing Cairo smart contracts
+- Building React frontends
+- Integrating wallets
+- Deploying to testnets
+- And more!
 
 ## Quickstart 2: Deploying a Smart Contract to Sepolia Testnet
 
@@ -335,16 +504,48 @@ Commands:
 | vercel      | Deploys app to vercel                        |
 | vercel:yolo | Force deploy app to vercel (ignoring errors) |
 
-## **What's next**
+## 🧪 Testing
 
-- Edit your smart contract `your_contract.cairo` in `packages/snfoundry/contracts/src`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/snfoundry/script-ts/deploy.ts`
-- Edit your smart contract tests in `packages/snfoundry/contracts/src/test`. To run tests use `yarn test`
-- You can write unit tests for your Next.js app! Run them with one the following scripts below.
-  - `yarn test:nextjs` to run regular tests with watch mode
-  - `yarn test:nextjs run` to run regular tests without watch mode
-  - `yarn test:nextjs run --coverage` to run regular tests without watch mode with coverage
+### Smart Contract Tests
+
+Run the Counter contract tests:
+
+```bash
+yarn test
+```
+
+Tests are located in `packages/snfoundry/contracts/tests/test_counter.cairo`
+
+### Frontend Tests
+
+Run Next.js application tests:
+
+```bash
+# Watch mode
+yarn test:nextjs
+
+# Single run
+yarn test:nextjs run
+
+# With coverage
+yarn test:nextjs run --coverage
+```
+
+## 📚 What's Next
+
+Now that you have Counter DApp running, you can:
+
+- **Modify the Smart Contract**: Edit `packages/snfoundry/contracts/src/counter.cairo` to add new features
+- **Customize the Frontend**: Update components in `packages/nextjs/components/` to change the UI
+- **Add New Features**: Implement additional counter operations or analytics
+- **Deploy to Testnet**: Follow the [Sepolia deployment guide](#quickstart-2-deploying-a-smart-contract-to-sepolia-testnet) to deploy to Starknet Sepolia
+- **Learn More**: Check out the [Scaffold-Stark documentation](https://docs.scaffoldstark.com/) for advanced features
+
+## 🎓 Tutorial Reference
+
+This project follows the **Developer Basecamp 13** tutorial series. For step-by-step guidance on building this dApp, watch the complete series:
+
+🔗 **[Developer Basecamp 13 - 6 Video Tutorial Series](https://www.youtube.com/playlist?list=PLMXIoXErTTYV-Pd6tXu0TzsQ2EYQ5bBEh)**
 
 </details>
 
