@@ -19,6 +19,10 @@
 - **Analytics Dashboard**: Track counter statistics, user leaderboard, and action distribution
 - **Wallet Integration**: Connect with multiple Starknet wallet providers or use the built-in burner wallet
 
+<div align="center">
+  <img src="./assets/counter-dapp-preview.png" alt="Counter DApp Preview" width="100%" />
+</div>
+
 ### 🏗️ Built With
 
 This project is built using **Scaffold-Stark 2**, an open-source toolkit for building dApps on Starknet:
@@ -206,12 +210,14 @@ yarn chain
 ```
 
 **What you'll see:**
+
 - The command starts Starknet Devnet on `http://127.0.0.1:5050`
 - You'll see output indicating the network is running
 - Devnet provides prefunded accounts that you can use for testing
 - The network will keep running until you stop it (Ctrl+C)
 
 **Example output:**
+
 ```
 Starting Starknet Devnet...
 Listening on http://127.0.0.1:5050
@@ -229,12 +235,14 @@ yarn deploy
 ```
 
 **What you'll see:**
+
 - The contract compiles using Scarb
 - Deployment transaction is sent to Devnet
 - Contract address is displayed
 - The contract ABI and address are automatically saved to `packages/nextjs/contracts/deployedContracts.ts`
 
 **Example output:**
+
 ```
 Compiling contracts...
 Deploying CounterContract...
@@ -253,12 +261,14 @@ yarn start
 ```
 
 **What you'll see:**
+
 - Next.js development server starts
 - The app compiles and builds
 - Server runs on `http://localhost:3000`
 - Hot reload is enabled for development
 
 **Example output:**
+
 ```
 ▲ Next.js 14.x.x
 - Local:        http://localhost:3000
@@ -367,6 +377,7 @@ This project is based on the **Developer Basecamp 13** tutorial series:
 📺 **[Watch the Tutorial Series](https://www.youtube.com/playlist?list=PLMXIoXErTTYV-Pd6tXu0TzsQ2EYQ5bBEh)**
 
 The series consists of 6 videos covering:
+
 - Setting up Scaffold-Stark 2
 - Writing Cairo smart contracts
 - Building React frontends
